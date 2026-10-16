@@ -1,0 +1,9 @@
+---
+loan_type: acquisition
+property_type: industrial
+structure: mezz
+exit: refinance
+quality: gold
+source_memo: Memo Template for AI - Acquisition.docx
+---
+Based on the resume and personal financial statement provided by Mr. Margareten, he has substantial experience as an owner and investor in residential and commercial real estate. Mr.

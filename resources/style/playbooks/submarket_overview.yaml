@@ -1,0 +1,26 @@
+# Section playbook - see transaction_overview.yaml for the field descriptions.
+section: Submarket Overview
+purpose: >-
+  One or two paragraphs summarising (and improving) the appraisal's neighbourhood, market and demographic
+  sections, keeping its numbers exactly, and supporting the borrower's exit plan.
+required_elements:
+  - "Where the property is: corner/street, neighbourhood, city, county, state; character of the immediate area."
+  - "Connectivity and nearby demand drivers: highways/interstates, transit, major employers, hospitals, universities, amenities."
+  - "Market numbers that support the exit plan (see the guidance for this deal)."
+  - "Demographics: population and growth, median household income. ALWAYS state AMI / median household income for multifamily, single-family and condominium properties."
+variants:
+  refinance_exit: "Lease-up / hold / refinance: vacancy, availability, average rents ($/SF or $/unit), supply under construction, absorption, rent growth."
+  sale_exit: "Sale / condo sellout: comparable sales, pricing ($/SF or $/unit), buyer demand, sales activity / days on market."
+  sellout_exit: "Condo sellout: comparable condo sales, pricing per SF / unit, absorption of new units, days on market."
+  industrial: "Emphasise highway connectivity and logistics access, then vacancy and rents by segment."
+  hospitality: "Occupancy, ADR, RevPAR."
+allowed_attributions:
+  - "Based on the appraisal report"
+  - "Based on the data provided by CoStar"
+  - "According to the appraisal"
+banned_phrases: ["email chain", "term sheet", "per the", "it is worth noting", "in conclusion", "robust", "boasts",
+                 "background facts"]
+target_words: {min: 102, max: 189}    # examples: median 146 words, +/- 30%
+notes: >-
+  Cite the data source when the appraisal does ("Based on the data provided by CoStar, as of the fourth quarter of
+  2025, ..."). If the appraisal is not available, write [MISSING: appraisal market section].

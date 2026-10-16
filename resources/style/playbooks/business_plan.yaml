@@ -1,0 +1,23 @@
+# Section playbook - see transaction_overview.yaml for the field descriptions.
+section: Business Plan
+purpose: >-
+  One paragraph telling the story of what the BORROWER will do with the property (the overview summarises the
+  loan; the business plan tells the plan).
+required_elements:
+  - "The starting point (purchase / payoff / current situation)."
+  - "What the borrower will do and the budget (see the guidance for this loan type)."
+  - "Leverage as computed in the facts (total debt, LTC, value) - never recompute."
+  - "Timeline to stabilisation / completion."
+  - "The exit (sale, sellout or permanent refinance)."
+variants:
+  acquisition: "Purchase price, renovation / repositioning plan and capex budget, total debt at closing and as % of purchase price, how much capex is debt-funded, combined LTC of total debt and LTC of Castellan’s loan, as-complete / as-stabilized value, leasing assumptions, stabilisation timeline, exit."
+  construction: "Site acquisition (acreage, price), construction scope and hard-cost budget, units / SF / amenities, timeline, sponsor equity, Castellan’s LTC, stabilisation or sellout."
+  refinance: "Payoff of the existing loan (name the existing lender if known), why the borrower is refinancing, any remaining work, the additional time required, the marketing / lease-up / sale strategy and the repayment plan."
+  note_on_note: "Current situation (e.g. forbearance, UPB of the underlying note), use of Castellan’s proceeds, what the borrower will do during the term, timeline and the ultimate exit."
+  pari_passu: "Ratios refer to the total senior loan in which Castellan holds a pari passu share."
+allowed_attributions:
+  - "Based on the appraisal report"
+banned_phrases: ["email chain", "term sheet", "per the", "it is worth noting", "in conclusion", "robust", "boasts",
+                 "background facts", "net worth"]
+target_words: {min: 64, max: 120}     # examples: median 92 words, +/- 30%
+notes: Plain text, no bold. Numbers come from the facts; computed ratios are supplied - do not recompute them.

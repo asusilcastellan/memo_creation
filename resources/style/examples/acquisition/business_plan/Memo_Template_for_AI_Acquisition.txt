@@ -1,0 +1,9 @@
+---
+loan_type: acquisition
+property_type: industrial
+structure: mezz
+exit: refinance
+quality: gold
+source_memo: Memo Template for AI - Acquisition.docx
+---
+The borrower is purchasing the property for $3,000,000 and plans to invest an additional $1,700,000 in capital improvements to reposition and enhance the asset. At closing, Castellan and Reign will provide a total debt of $1,950,000 (65% of the purchase price). Additionally, $950,000 of the $1,700,000 renovation budget will be funded by debt, so the combined LTC of the total debt of $2,900,000 will be 62%, while LTC of the Castellan loan will be 48%. Based on the appraisal report, the as-complete value is expected to be $5,700,000. The borrower plans to lease up and refinance the property with a permanent loan once the renovations are complete.

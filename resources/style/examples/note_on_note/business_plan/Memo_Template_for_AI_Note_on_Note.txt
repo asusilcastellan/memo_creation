@@ -1,0 +1,9 @@
+---
+loan_type: note_on_note
+property_type: land
+structure: note_on_note
+exit: refinance
+quality: gold
+source_memo: Memo Template for AI - Note on Note.docx
+---
+The future development plan will consist of 50 hotel rooms, 20 condominiums, 31 lodge units, 18 employee dormitory units, two employee apartments, restaurant space, retail/commercial space, structured parking, and related amenities. The Senior Lender, Crosby Capital, recently entered into a forbearance agreement with the underlying borrower (the property owner) which brings the underlying note current with a unpaid principal balance of $4.153MM. The underlying sponsors will either refinance with a construction loan or sell the entitled land.

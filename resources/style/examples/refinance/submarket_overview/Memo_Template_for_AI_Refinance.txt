@@ -1,0 +1,9 @@
+---
+loan_type: refinance
+property_type: single-family
+structure: mezz
+exit: refinance
+quality: gold
+source_memo: Memo Template for AI - Refinance.docx
+---
+The subject property is located in Sag Harbor Village within the Hamptons, a premier luxury residential market in Suffolk County, NY. The area is characterized by a highly affluent buyer base and strong demand for waterfront estates, driven by second-home ownership and proximity to New York City. Median household income in the area is approximately $119,000, with significantly higher wealth levels among second-home owners and luxury buyers. Sag Harbor offers a mix of historic character, marina access, and high-end retail and dining, making it a desirable destination for both seasonal and year-round residents.

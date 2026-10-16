@@ -1,0 +1,13 @@
+---
+loan_type: acquisition
+property_type: industrial
+structure: mezz
+exit: refinance
+quality: gold
+source_memo: Memo Template for AI - Acquisition.docx
+---
+The subject property is located at the southwest corner of East Aurora Street and Gear Street in the Browns Meadows neighbourhood of Waterbury, New Haven County, Connecticut. The immediate area is predominantly industrial, characterized by a concentration of industrial buildings and supporting infrastructure.
+
+Waterbury occupies a strategic position within New Haven County and benefits from strong regional connectivity. The city sits at the junction of Interstate 84 and Route 8, providing efficient East–West and North–South access for freight movement and workforce commuting. This accessibility reinforces the city's longstanding role as an industrial hub.
+
+Based on the data provided by CoStar, as of the fourth quarter of 2025, the Waterbury industrial submarket reports a vacancy rate of 4.4%. The submarket has approximately 650,000 square feet of available space, resulting in an availability rate of 5.8%. There is no industrial space currently under construction. Market rents average $8.40 per square foot across industrial properties. Logistics facilities lease for roughly $8.50 per square foot, flex properties for $9.90 per square foot, and specialized assets for approximately $8.00 per square foot.

@@ -1,0 +1,9 @@
+---
+loan_type: refinance
+property_type: single-family
+structure: mezz
+exit: refinance
+quality: gold
+source_memo: Memo Template for AI - Refinance.docx
+---
+The sponsor, Mr. Jay Bialsky, is a real estate developer based in the Hamptons with over 30 years of experience. Mr. Bialsky is the owner of JBialsky Premiere Design and Development. As per the sponsor’s bio shared with Castellan, JBialsky Premiere Design and Development focuses on the development and construction of luxury residential properties in the East End of Long Island, including Sag Harbor and the broader Hamptons market.

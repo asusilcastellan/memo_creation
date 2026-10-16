@@ -1,0 +1,184 @@
+# =============================================================================
+# CASTELLAN STANDARD LANGUAGE  (the "green" text in the AI templates)
+# -----------------------------------------------------------------------------
+# Everything here is rendered with Jinja2. `f` is the DealFacts object built
+# by memo_app/facts.py (see that file for every available field).
+#
+# Filters:  money  -> $2,240,000      mm   -> $3.68MM      pct -> 39%
+# (f.index_display is the index phrase from memo_app/rates.py DISPLAY, e.g.
+#  "1-Month CME Term SOFR index", "WSJ Prime Rate", "AMERIBOR index")
+#           pct2   -> 9.64%           sf   -> 89,855       cap -> Capitalise first letter
+#           flag   -> red "[REVIEW: ...]" marker for the analyst
+#
+# A missing {{ value }} prints as a red "[MISSING R7: <field>]" remark. Every red
+# remark carries an ID (R1, R2, ...) that matches a row of the review workbook
+# ("- Review.xlsx") saved next to the memo, where the details are.
+# {{ f.remark('<key>') }} links to an item raised in memo_app/facts.py (same ID);
+# {{ 'REVIEW: short text'|flag }} creates a new item. Keep remark text short.
+# Edit wording freely; keep the {{ }} / {% %} parts intact.
+# =============================================================================
+
+title: LOAN INVESTMENT MEMORANDUM
+
+headings:
+  transaction_overview: "Transaction Overview:"
+  sponsorship_overview: "Sponsorship Overview:"
+  submarket_overview: "Submarket Overview:"
+  business_plan: "Business Plan:"
+  risks: "Risks & Mitigants:"
+  loan_financials: "Loan Financials:"
+  investment_highlights: "Investment Highlights"
+  pictures: "Pictures"
+  map: "Map"
+
+# The AI-written Transaction Overview must start with this exact sentence
+# opening (the model continues it).
+openers:
+  transaction_overview:
+    acquisition: "Castellan Capital will provide a senior loan of {{ f.loan|money }}"
+    construction: "Castellan Capital will provide a loan of {{ f.loan|money }} to finance the construction of"
+    refinance: "Castellan Capital will provide a {{ f.loan|money }} senior loan to refinance"
+    note_on_note: "Castellan will provide a note-on-note loan of {{ f.loan|money }} secured by an assignment of the underlying loan encumbering"
+  # Used instead of the loan-type opener when Castellan holds a share of a larger loan (facts.structure).
+  structure:
+    pari_passu: "Castellan Capital will provide a {{ f.loan|money }} pari passu participation in a {{ f.total_loan|money }} senior loan led by {{ f.lead_lender }} to"
+    participation: "Castellan Capital will provide a {{ f.loan|money }} participation in a {{ f.total_loan|money }} senior loan led by {{ f.lead_lender }} to"
+    # Castellan's share was not found anywhere: never present the whole loan as Castellan's position.
+    participation_no_share: "Castellan Capital will participate in a {{ f.total_loan|money }} senior loan led by {{ f.lead_lender }} {{ f.remark('share_missing') }}"
+
+sponsorship:
+  business_background_label: "Business background:"
+  personal_financials_label: "Personal financials:"
+  background_label: "Background & credit check results:"
+
+  personal_financials: >-
+    {% if f.sponsors %}According to the personal financial statement{% if f.sponsors|length > 1 %}s{% endif %} submitted to Castellan,
+    {% for s in f.sponsors %}{{ s.ref }} has an estimated net worth of {{ s.net_worth|mm }}{% if s.mention_cash and s.real_estate %},
+    which includes {{ s.liquid|mm }} in cash and securities and {{ s.real_estate|mm }} in real estate assets{% elif s.mention_cash %},
+    which includes {{ s.liquid|mm }} in cash and securities{% elif s.real_estate %}. This includes approximately {{ s.real_estate|mm }} of
+    real estate assets{% endif %}. {% endfor %}{% else %}{{ f.remark('pfs_missing') }}{% endif %}
+
+  background: >-
+    Castellan engaged {{ f.background_provider }} to perform civil and criminal record checks on {{ f.sponsor_names }}.
+    {% if f.background_clean is sameas true %}Based on the results, there were no records of bankruptcy, tax liens or pending civil or criminal suits.
+    {% elif f.background_clean is sameas false %}{{ f.remark('background_adverse') }}
+    {% else %}{{ f.remark('background_missing', 'missing', 'background / credit report') }}{% endif %}
+    {% if f.online_search_clean is sameas false %}{{ f.remark('online_search', 'review', 'online search: possible adverse items') }}
+    {% else %}In addition, online searches did not reveal any derogatory or adverse information about {{ f.sponsor_ref }}.{% endif %}
+    {% if f.credit_scores %}Additionally, the credit report indicated that {{ f.sponsor_ref }} {% if f.credit_scores|length > 1 %}have {% if f.credit_strong %}strong {% endif %}credit scores of{% else %}has {% if f.credit_strong %}a strong credit score{% else %}a credit score{% endif %} of{% endif %}
+    {{ f.credit_scores|join(' and ') }}{% if f.no_past_due %}, with no past due balances on their accounts{% endif %}.{% endif %}
+
+loan_financials_intro: "Please see below for an overview of relevant loan metrics and other financial information about the property and transaction:"
+
+highlights_intro: "Castellan believes this is an attractive investment opportunity for the following reasons:"
+
+# -----------------------------------------------------------------------------
+# Risks & Mitigants. Rendered in order; `when` is a Jinja expression, the risk
+# is skipped when it is false.
+# -----------------------------------------------------------------------------
+risks:
+  - key: ltv
+    label: "LTV Risk:"
+    when: "true"
+    text: >-
+      {% if f.ltv_suspect %}{{ f.remark('ltv_suspect') }}
+      {% elif f.is_participation %}The {{ f.total_loan|money }} senior loan led by {{ f.lead_lender }}, {% if f.loan %}in which Castellan holds a {{ f.loan|money }}
+      pari passu position,{% else %}in which Castellan participates,{% endif %} represents an estimated Loan-to-Value ratio of {{ f.memo_ltv|pct }}, based on the {{ f.value_label_quoted }} appraised value of
+      {{ f.value|money }} provided by {{ f.appraiser }}. Castellan’s position ranks equally with the lead lender’s share of the loan.
+      {% elif f.loan_type == 'construction' %}Upon completion of the property, the Loan-to-Value ratio will be approximately {{ f.memo_ltv|pct }},
+      based on the {{ f.value_label_lower }} appraised value provided by {{ f.appraiser }}. Castellan’s independent underwriting and analysis support this valuation.
+      Castellan believes that the strong basis in the loan can facilitate a potential sale of the Note in the event of default.
+      {% else %}Castellan’s estimated Loan-to-Value ratio will be {{ f.memo_ltv|pct }}, based on the {{ f.value_label_quoted }} appraised value of {{ f.value|money }}
+      provided by {{ f.appraiser }}. Castellan supports this value based on the firm’s independent underwriting and analysis of comparable sales and rentals.
+      We believe that the strong basis in the loan can facilitate a potential sale of the Note in the event of a default.
+      {% endif %}Castellan has developed relationships with defaulted note buyers and has sold several non-performing loans in the past.
+      {% if f.has_mezz %}Additionally, the junior loan provided by {{ f.junior_lender }} serves as another layer of protection for Castellan’s loan,
+      since in an event of default, the junior lender will have to keep Castellan current in order to preserve its equity in the deal.{% endif %}
+
+  - key: sponsor
+    label: "Sponsor Risk:"
+    when: "true"
+    text: >-
+      {% if f.prior_relationship %}Castellan has previously worked with {{ f.sponsor_ref }}. In addition, Castellan
+      {% else %}Although Castellan has not previously worked with {{ f.sponsor_ref }}, Castellan {% endif %}has performed background and credit checks
+      on the sponsor{% if f.plural %}s{% endif %} to ensure they do not have prior defaults, bankruptcies, or liens.
+      {{ f.sponsor_experience }}
+      {% if f.personal_guaranty and f.completion_guaranty %}A personal guaranty as well as a completion guaranty from {{ f.sponsor_ref }} will serve as additional security for the loan.
+      {% elif f.personal_guaranty %}{{ f.sponsor_ref|cap }} will provide a full personal guaranty which will serve as additional protection.
+      {% elif f.carveout_guaranty %}{{ f.sponsor_ref|cap }} will provide a bad-boy carve-out guaranty which will serve as additional protection.
+      {% else %}{{ f.remark('guaranty_missing') }}{% endif %}
+
+  - key: construction
+    label: "Construction Completion Risk:"
+    when: "f.loan_type == 'construction'"
+    text: >-
+      Castellan has engaged {{ f.pcr_firm }} to conduct a plan and cost review to independently verify whether the construction budget presented
+      by the sponsor is adequate and sufficient. At the time of this memo, Castellan is awaiting the results of the report.
+      {% if f.construction_reserve %}At closing, Castellan will escrow {{ f.construction_reserve|money }} as a Construction Reserve towards hard costs completed on the project.{% endif %}
+
+  - key: environmental
+    label: "Environmental Risk:"
+    when: "true"
+    text: >-
+      {% if f.env_status == 'missing' %}{{ f.remark('env_missing', 'missing', 'environmental report') }}
+      {% elif f.env_status == 'phase2_clear' %}Castellan engaged {{ f.env_provider }} to conduct {{ f.env_report_phrase }} on the property, which identified
+      {{ f.env_conditions }}; a subsequent {{ f.env_phase2_type }} concluded that no further assessment is warranted.
+      {% else %}Castellan engaged {{ f.env_provider }} to conduct {{ f.env_report_phrase }} on the property.
+      {% if f.env_status == 'clean' %}The report revealed no recognized environmental conditions and suggested no further action or remediation.
+      {% elif f.env_status == 'pending' %}At the time of this memo, Castellan is awaiting the results of the report.
+      {% else %}{{ f.remark('env_issues') }}{% endif %}{% endif %}
+
+  - key: interest_rate
+    label: "Interest Rate/Return Risk:"
+    when: "f.loan_type != 'note_on_note'"
+    text: >-
+      {% if f.is_floating is sameas false %}Castellan’s loan carries a fixed interest rate of {{ f.fixed_rate|pct2 }}.
+      {% else %}Castellan’s interest rate is floating based on the {{ f.index_display }}{% if f.spread %} plus a spread of {{ f.spread|pct2 }}{% endif %}
+      and is {% if f.rate_cap %}capped at {{ f.rate_cap }}{% else %}not capped{% endif %}. The effective rate at closing is expected to be {{ f.effective_rate|pct2 }}.
+      {% if f.floor %}Castellan’s loan has a floor rate of {{ f.floor|pct2 }} should rates fall.{% endif %}
+      {% endif %}{% if f.interest_reserve %}Castellan will hold a {{ f.interest_reserve|money }} interest reserve.{% endif %}
+      {% if f.is_floating is not sameas false %}Castellan’s rate on advances from its leverage facility is also based on the same index rate used in the
+      underlying loan. This way, the rates move in tandem with limited negative effect on Castellan’s returns.{% endif %}
+
+  - key: insurance
+    label: "Insurance Risk:"
+    when: "true"
+    text: >-
+      {% if f.insurance_mode == 'construction' %}At closing, the property will be covered with general liability coverage of {{ f.liability_occurrence|money }}
+      per occurrence. The sponsor will have a builder’s risk policy with a coverage amount always greater than Castellan’s loan principal.
+      {% if not f.insurance_bound %}At the time of this memo, the sponsor is working on binding their policies.{% endif %}
+      {% else %}The property is insured by a {{ f.property_coverage|money }} property insurance policy and {{ f.liability_occurrence|money }} of liability insurance
+      {%- if f.umbrella %}, along with a {{ f.umbrella|money }} umbrella policy{% endif %}. Castellan will ensure adequate property insurance is in place upon closing the loan.
+      {% endif %}In reviewing insurance coverage, the firm relies on each of the following: the insurance coverage for similar types of properties in its
+      existing portfolio of loans; an independent review and recommendation from {{ f.insurance_agent }}, which is Castellan’s main insurance agent.
+
+# -----------------------------------------------------------------------------
+# Investment Highlights (bullets). Same `when` logic.
+# -----------------------------------------------------------------------------
+highlights:
+  - when: "f.loan_type != 'note_on_note'"
+    text: "This loan presents an attractive risk-adjusted return for a first-lien position in {{ f.property_phrase }} in {{ f.city_state }}."
+  - when: "f.loan_type == 'note_on_note'"
+    text: "This loan presents an attractive risk-adjusted return through a first-priority assignment of the collateral loan notes and mortgages encumbering {{ f.property_phrase }} in {{ f.city_state }}."
+  - when: "f.loan_type != 'construction' and f.loan_psf and f.comps_psf"
+    text: "Castellan will be providing the loan on the property at a basis of {{ f.loan_psf|money }}/SF, while the sales comps traded at an adjusted average of {{ f.comps_psf|money }}/SF."
+  - when: "f.has_mezz"
+    text: "A subordinate loan of {{ f.junior_loan|money }} provided by {{ f.junior_lender }} effectively serves as another layer of security for Castellan."
+  - when: "f.ltv_suspect"
+    text: "{{ f.remark('ltv_suspect') }}"
+  - when: "not f.ltv_suspect and f.is_participation and f.loan"
+    text: "Castellan holds a {{ f.loan|money }} pari passu position in a {{ f.total_loan|money }} senior loan with a {{ f.value_label_quoted }} LTV of approximately {{ f.memo_ltv|pct }}."
+  - when: "not f.ltv_suspect and f.is_participation and not f.loan"
+    text: "Castellan participates in a {{ f.total_loan|money }} senior loan with a {{ f.value_label_quoted }} LTV of approximately {{ f.memo_ltv|pct }}."
+  - when: "not f.ltv_suspect and not f.is_participation and f.loan_type == 'construction'"
+    text: "Castellan’s fully funded as-complete LTV ratio is approximately {{ f.memo_ltv|pct }}."
+  - when: "not f.ltv_suspect and not f.is_participation and f.loan_type != 'construction'"
+    text: "Castellan’s {{ f.value_label_quoted }} LTV is approximately {{ f.memo_ltv|pct }}."
+  - when: "f.liquidity_highlight"
+    text: "The sponsor{% if f.plural %}s have{% else %} has{% endif %} liquidity of {{ f.total_liquidity|mm }}."
+  - when: "f.equity_highlight"
+    text: "The borrower has invested substantial real equity ahead of Castellan’s loan, which will be approximately {{ f.equity|mm }}{% if f.loan_type == 'construction' %} upon completion{% endif %} and will represent {{ f.equity_pct|pct }} of the project’s total cost."
+  - when: "f.loan_type == 'construction'"
+    text: "In the event the company comes into possession of the collateral, Castellan believes that it would have the potential to foreclose on the property and take title at an attractive overall cost basis. Alternatively, Castellan believes they would be able to sell the note in an event of default as Castellan has relationships with non-performing note buyers."
+  - when: "f.loan_type != 'construction'"
+    text: "In the event the company comes into possession of the collateral, Castellan believes that it would have the potential to foreclose on the property and, if successful, take title at an attractive overall cost basis. Unlike traditional lenders, Castellan has the knowledge and infrastructure in place to successfully renovate, recapitalize and take ownership of the property."

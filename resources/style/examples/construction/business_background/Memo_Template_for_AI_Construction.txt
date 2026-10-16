@@ -1,0 +1,9 @@
+---
+loan_type: construction
+property_type: multifamily
+structure: senior
+exit:
+quality: gold
+source_memo: Memo Template for AI - Construction.docx
+---
+The Borrowers, David and Robert Casselman, have decades of experience across real estate development, finance, and business operations. David Casselman spent over 50 years in financial leadership roles across multinational corporations and entrepreneurial ventures. He has led eight commercial real estate financings ranging from $4.0 million to $75.0 million. Robert Casselman began investing in real estate in the 1960s while working as an accountant. He eventually transitioned into a full-time real estate developer and manager. Notable projects include the Mankato Student Housing portfolio (524 units), All American Self Storage (multiple locations in MN), and The Roseberry, a 285-unit Class A multifamily acquisition in Columbia, SC. Together, David and Robert have demonstrated a strong track record in sourcing, structuring, operating, and refinancing complex real estate transactions across asset types and capital structures. The General Contractor for the project is Weaver Cook Construction, an industry leading builder specializing in multifamily projects across the Southeast. Founded in 1939 and headquartered in Greensboro, NC, the firm has built a strong reputation for quality, reliability, and collaborative project delivery.

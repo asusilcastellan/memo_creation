@@ -1,0 +1,9 @@
+---
+loan_type: note_on_note
+property_type: land
+structure: note_on_note
+exit: refinance
+quality: gold
+source_memo: Memo Template for AI - Note on Note.docx
+---
+Castellan will provide a note-on-note loan of $2,400,000 secured by an assignment of the underlying loan encumbering a property located in Mountain Village, Colorado. The subject property comprises a 36,319-square-foot (0.83-acre) land site with moderate slopes, currently improved with a gravel parking lot and walkway. The total buildable square footage is 179,091. The underlying sponsors will either refinance with a construction loan or sell the entitled land.

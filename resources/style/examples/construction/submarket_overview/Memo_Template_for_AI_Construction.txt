@@ -1,0 +1,11 @@
+---
+loan_type: construction
+property_type: multifamily
+structure: senior
+exit:
+quality: gold
+source_memo: Memo Template for AI - Construction.docx
+---
+The subject property is located at 161 N. Coit Street in the heart of downtown Florence, South Carolina. Centrally positioned across from City Hall and at the corner of West Evans and North Coit Streets, the property sits within walking distance to the McLeod Regional Medical Center, Francis Marion University’s downtown campus, and a vibrant collection of restaurants, shops, art venues, and public gathering spaces. Florence’s population grew by almost 27% between 2009 and 2023. The population has also increased each year since 2001. The city’s median household income is $60,979. Florence has earned recognition as one of America’s Top 50 Cities for Business Relocation and Expansion by Expansion Management Magazine, having attracted over $1.0 billion in capital investment across commercial, institutional, and cultural sectors in the past eight years.
+
+The subject property represents the first phase of a larger master planned redevelopment project that will include a hotel, a 40,000 square foot commercial office building, residential town homes, and the conversion of a historic warehouse to a restaurant/retail center.

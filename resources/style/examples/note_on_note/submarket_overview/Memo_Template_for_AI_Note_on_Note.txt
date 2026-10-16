@@ -1,0 +1,11 @@
+---
+loan_type: note_on_note
+property_type: land
+structure: note_on_note
+exit: refinance
+quality: gold
+source_memo: Memo Template for AI - Note on Note.docx
+---
+According to the appraisal report, the subject property is located within the Mountain Village/Telluride resort submarket in San Miguel County, CO, a premier luxury ski destination characterized by high-end hospitality and residential developments, limited developable land, and strong barriers to new supply. The area benefits from direct integration with the Telluride Ski Resort and proximity to luxury hotels, condominiums, and resort amenities.
+
+As of Q1 2026, the Colorado ski area luxury hospitality market reported a trailing twelve-month occupancy rate of approximately 50.6%, with ADR averaging approximately $658 per night. Within the competitive luxury hotel set analysed in the appraisal, occupancy averaged approximately 53.3% with ADR exceeding $1,025 per night, reflecting continued demand for ultra-luxury hospitality product despite broader market normalization trends.

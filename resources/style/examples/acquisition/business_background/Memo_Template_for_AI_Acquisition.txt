@@ -1,0 +1,9 @@
+---
+loan_type: acquisition
+property_type: industrial
+structure: mezz
+exit: refinance
+quality: gold
+source_memo: Memo Template for AI - Acquisition.docx
+---
+According to the resume provided to Castellan, Shaya Margareten is the founder & operator of SMHI, a construction firm based in Monsey, New Jersey. Shaya is a real estate investor focused on high-yield, value-add properties and growing his portfolio through strategic acquisitions, renovations, and refinancing. SMHI delivers large-scale renovations and turnkey commercial projects—from industrial warehouses to healthcare facilities. Key holdings include stabilized multifamily buildings and retail strips generating $1.2M + annual NOI.

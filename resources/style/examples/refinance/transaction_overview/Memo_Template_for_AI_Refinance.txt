@@ -1,0 +1,9 @@
+---
+loan_type: refinance
+property_type: single-family
+structure: mezz
+exit: refinance
+quality: gold
+source_memo: Memo Template for AI - Refinance.docx
+---
+Castellan Capital will provide a $22,270,000 senior loan to refinance the existing construction loan for two luxury waterfront single-family residences located at 2 West Water Street, Sag Harbor, NY. Turret Equities will provide a $3,930,000 junior loan subordinate to Castellan’s position. The borrower intends to repay both Castellan and Turret Equities through the sale of the properties.

@@ -1,0 +1,191 @@
+# =============================================================================
+# WHERE EACH MEMO INPUT COMES FROM
+# -----------------------------------------------------------------------------
+# One entry per source document. The locator looks inside the deal folder for
+# a sub-folder whose name matches one of `folders` (case/punctuation-insensitive,
+# exact match first, then "contains" match). "." means the deal root itself.
+#
+#   include          glob patterns a file must match (on the file name)
+#   exclude          glob patterns that disqualify a file
+#   prefer           glob patterns that add +10 to the score (first = strongest)
+#   prefer_ext       extensions ranked best-first (+3, +2, +1 ...)
+#   exclude_dirs     sub-folders to skip (e.g. Archive)
+#   recursive        also look in nested sub-folders
+#   pick             "best" -> 1 file   |  "all" -> up to max_files files
+#   signature_check  (term sheet only) render the last pages and ask the model
+#                    whether the borrower has signed; signed files win.
+#   fallback_any_folder  if the named folders hold no matching file, take
+#                    matching files from anywhere in the deal folder.
+#   ordered          try `folders` strictly in the listed order ("." = deal
+#                    root) and use the first one that has a matching file.
+#   display_name / used_for   optional: how the row reads in the app's Sources
+#                    table (defaults in memo_app/sources_plan.py).
+#   memo_sections    the memo sections this document feeds (shown in the Sources
+#                    table and the review workbook; plain English, edit freely).
+#
+# In `folders`, "<deal>" is replaced by the deal folder's name, and "." (the
+# deal root) is only used when none of the named folders exists.
+#
+# Ties are broken by "date modified" (newest wins), which is what the analysts
+# do by hand today. All matching is case-insensitive.
+# =============================================================================
+
+sources:
+
+  term_sheet:
+    label: Signed term sheet
+    memo_sections: [Transaction Overview, Business Plan, Risks - Sponsor / Construction / Interest Rate, Loan Financials]
+    folders: ["Term Sheet", "Term Sheets", "Termsheet", "LOI", "Letter of Intent"]
+    include: ["*.pdf", "*.docx"]
+    exclude: ["~$*"]
+    prefer: ["*fully executed*", "*signed*", "*executed*", "*countersigned*"]
+    prefer_ext: [".pdf", ".docx"]
+    exclude_dirs: ["Archive", "Old", "Superseded", "Drafts"]
+    recursive: true
+    pick: best
+    signature_check: true
+
+  psa:
+    label: Executed purchase & sale agreement
+    memo_sections: [Transaction Overview, Business Plan]
+    folders: ["PSA", "Purchase and Sale Agreement", "Purchase Agreement", "Contract of Sale"]
+    include: ["*.pdf", "*.docx"]
+    exclude: ["~$*", "*amendment*"]
+    prefer: ["*executed psa*", "*executed*", "*signed*", "*psa*", "*agreement of sale*"]
+    prefer_ext: [".pdf"]
+    exclude_dirs: ["Archive"]
+    recursive: true
+    pick: best
+
+  model:
+    label: Underwriting model (Excel)
+    memo_sections: [Transaction Overview, Business Plan, Loan Financials, Investment Highlights]
+    # searched in this order: deal root, then Model / Underwriting folders, then Memo (one pager excluded)
+    folders: [".", "Model", "Models", "Underwriting", "UW", "Memo", "Memos"]
+    ordered: true
+    include: ["*model*.xlsx", "*model*.xlsm", "*uw*.xlsx", "*uw*.xlsm", "*underwriting*.xlsx", "*underwriting*.xlsm",
+              "*pro forma*.xlsx", "*pro forma*.xlsm", "*proforma*.xlsx", "*proforma*.xlsm",
+              "*sizing*.xlsx", "*sizing*.xlsm"]
+    exclude: ["~$*", "*one pager*", "*onepager*", "*one-pager*"]
+    prefer: ["*model updated*", "*final*model*", "*model*", "*underwriting*", "*uw*", "*sizing*", "*pro*forma*"]
+    prefer_ext: [".xlsx", ".xlsm"]
+    exclude_dirs: ["Archive"]
+    recursive: false
+    pick: best
+
+  one_pager:
+    label: One pager (loan financials tables)
+    memo_sections: [Loan Financials, Investment Highlights]
+    folders: ["Memo", "Memos"]
+    include: ["*one pager*.xls*", "*one-pager*.xls*", "*onepager*.xls*"]
+    exclude: ["~$*"]
+    prefer: []
+    prefer_ext: [".xlsx", ".xlsm"]
+    exclude_dirs: ["Archive"]
+    recursive: false
+    pick: best
+
+  resume:
+    label: Sponsor resume / bio
+    memo_sections: [Sponsorship - Business background, Risks - Sponsor]
+    folders: ["Resume", "Resumes", "Bio", "Sponsor Bio", "Sponsor Resume"]
+    include: ["*.pdf", "*.docx", "*.doc"]
+    exclude: ["~$*"]
+    prefer: ["*bio*", "*resume*", "*cv*"]
+    prefer_ext: [".pdf", ".docx"]
+    exclude_dirs: ["Archive"]
+    recursive: true
+    pick: all
+    max_files: 4
+
+  pfs:
+    label: Personal financial statement(s)
+    memo_sections: [Sponsorship - Personal financials, Investment Highlights]
+    folders: ["PFS & SREO", "PFS and SREO", "PFS", "Personal Financial Statement"]
+    include: ["*.pdf", "*.xlsx", "*.xls", "*.docx"]
+    exclude: ["~$*", "*reo*", "*real estate owned*", "*schedule of real estate*", "*liability schedule*"]
+    prefer: ["*personal financial statement*", "*pfs*"]
+    prefer_ext: [".pdf", ".xlsx"]
+    exclude_dirs: ["Archive"]
+    recursive: true
+    pick: all
+    max_files: 4
+
+  background:
+    label: Background check & credit report (Eaglescreen)
+    memo_sections: [Sponsorship - Background & credit, Risks - Sponsor]
+    folders: ["Background Authorisation & Credit Report", "Background Authorization & Credit Report",
+              "Background & Credit", "Background Check", "Background", "Credit Report"]
+    include: ["*.pdf"]
+    exclude: ["*authori*form*", "*disclosure*", "*consent*"]
+    prefer: ["*final result*", "*results*", "*credit*", "*report*"]
+    prefer_ext: [".pdf"]
+    exclude_dirs: ["Archive"]
+    recursive: true
+    pick: all
+    max_files: 6
+
+  appraisal:
+    label: Final appraisal report
+    memo_sections: [Submarket Overview, Business Plan, Risks - LTV, Loan Financials, Investment Highlights]
+    folders: ["Appraisal", "Appraisals", "Valuation"]
+    include: ["*.pdf"]
+    exclude: ["*engagement*", "*invoice*", "*proposal*", "*bid*", "*review*"]
+    prefer: ["*final appraisal*", "*appraisal*", "*report*"]
+    prefer_ext: [".pdf"]
+    exclude_dirs: ["Archive", "Draft", "Drafts"]
+    recursive: true
+    pick: best
+
+  environmental:
+    label: Environmental report (Phase I / HRDR)
+    memo_sections: [Risks - Environmental]
+    folders: ["Environmental", "Phase 1", "Phase I", "Phase I ESA", "ESA", "Environmental Report"]
+    include: ["*.pdf"]
+    exclude: ["*invoice*", "*engagement*", "*proposal*", "*reliance*"]
+    prefer: ["*phase i*", "*phase 1*", "*phase ii*", "*phase 2*", "*esa*", "*hrdr*", "*database*", "*report*"]
+    prefer_ext: [".pdf"]
+    exclude_dirs: ["Archive"]
+    recursive: true
+    pick: all           # Phase I + Phase II are both read
+    max_files: 3
+
+  insurance:
+    label: Insurance evidence / certificates
+    memo_sections: [Risks - Insurance]
+    folders: ["Insurance"]
+    include: ["*.pdf"]
+    exclude: ["*invoice*", "*application*"]
+    prefer: ["*evidence*", "*acord*", "*certificate*", "*coi*", "*binder*", "*dec*"]
+    prefer_ext: [".pdf"]
+    exclude_dirs: ["Archive"]
+    recursive: true
+    pick: all
+    max_files: 4
+
+  emails:
+    label: Email chain (.eml / .msg)
+    memo_sections: [Transaction Overview, Business Plan]
+    folders: ["Emails", "Email", "Correspondence", "Borrower material X", "<deal> - Shared Folder", "."]
+    include: ["*.eml", "*.msg"]
+    exclude: ["~$*"]
+    prefer: []
+    prefer_ext: [".eml", ".msg"]
+    exclude_dirs: []
+    recursive: true
+    pick: all
+    max_files: 30
+    fallback_any_folder: true
+
+  photos:
+    label: Property photos
+    memo_sections: [Pictures]
+    folders: ["Site Visit", "Photos", "Pictures", "Site Photos"]
+    include: ["*.jpg", "*.jpeg", "*.png"]
+    exclude: []
+    prefer: ["*front*", "*exterior*", "*aerial*"]
+    prefer_ext: [".jpg", ".jpeg", ".png"]
+    exclude_dirs: []
+    recursive: true
+    pick: all
+    max_files: 4

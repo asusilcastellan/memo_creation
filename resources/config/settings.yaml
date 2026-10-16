@@ -1,0 +1,75 @@
+# Non-secret settings. Secrets (API keys, tokens) live in the .env file.
+# Any OPENAI_MODEL_* value set in .env overrides the models below.
+
+openai:
+  # Model used to read documents and return structured data (cheap + fast).
+  extract_model: gpt-5.4-mini
+  # Model used to write the prose sections in Castellan's voice.
+  write_model: gpt-5.5
+  # Reasoning effort for GPT-5 family models: minimal | low | medium | high.
+  # Leave empty ("") if you switch to a model that does not support it.
+  extract_reasoning_effort: low
+  write_reasoning_effort: medium
+  request_timeout_seconds: 300
+  max_retries: 3
+  # Parallel document extraction calls.
+  max_parallel_requests: 4
+
+documents:
+  # Documents longer than this many characters are trimmed to their most
+  # relevant pages (keyword scoring) before being sent to the model.
+  max_chars_per_document: 180000
+  # A PDF page with fewer characters than this is treated as scanned and is
+  # sent to the model as an image instead.
+  scanned_page_min_chars: 80
+  max_image_pages: 12
+  image_dpi: 110
+
+rules:
+  # From Vasist's template comments.
+  liquidity_highlight_min: 2000000      # add "Sponsor has liquidity of $X" highlight above this
+  equity_highlight_min_pct: 0.30        # add borrower-equity highlight above this share of total cost
+  pfs_cash_mention_min: 1000000         # mention cash in Personal financials above this
+  price_mismatch_tolerance_pct: 0.01    # PSA vs model purchase price difference that raises a flag
+  strong_credit_min: 700                # "strong credit score(s)" only if every score is at least this
+  ltv_sanity_min: 0.10                  # an LTV outside 10%-100% is not printed (red remark + review note)
+  ltv_sanity_max: 1.00
+  comps_mismatch_pct: 0.15              # one pager vs appraisal comps average difference that raises a check
+  # WSJ Prime Rate in percent, used when the index is Prime and no rate is typed in the app.
+  # UPDATE THIS WHEN THE FED MOVES RATES (Prime = Fed funds upper bound + 3.00%).
+  # Ignored when FRED_API_KEY is set in .env (then the live FRED series DPRIME is used).
+  prime_rate_pct: 7.50
+  # Email chain vs signed term sheet / computed ratios: differences above these raise a "check" item.
+  email_amount_tolerance_pct: 0.01      # requested loan amount vs term sheet loan (1%)
+  email_ratio_tolerance_pts: 1.0        # requested LTV/LTC vs computed (percentage points)
+
+emails:
+  # The email chain sent to the model is capped at this many characters: the original (first)
+  # message and the newest messages are kept, older replies in the middle are left out.
+  max_chain_chars: 60000
+
+debug:
+  # Cache folder: %LOCALAPPDATA%\CastellanMemo\cache (Help -> Open diagnostics folder in the app).
+  # keep_run_files: also keep facts.json and the sources report of each run (normally deleted once the
+  # memo is saved; debug.log is always kept). Files older than cache_retention_days are deleted on start.
+  keep_run_files: false
+  cache_retention_days: 7
+
+rates:
+  # During "Generate memo", fetch the index value when none is typed in the app:
+  # SOFR / 30-day average SOFR from the NY Fed (public API), Prime from FRED (if FRED_API_KEY is set).
+  # 1M / 3M Term SOFR (CME) has no free API: overnight SOFR is used as a proxy and flagged.
+  # AMERIBOR is manual only. A failed fetch never stops the memo (floor rate is used and flagged).
+  auto_fetch: true
+
+memo:
+  insurance_agent: IMA Corp              # older memos used "York International"
+  background_provider: Eaglescreen
+  few_shot_examples_per_section: 4
+  # After "Check sources", look in the other deal folders of the portfolio (the deal folder's parent)
+  # for file names containing the sponsor's surname, taken from the PFS / resume file names. Matches
+  # tick "Castellan has done a loan with this sponsor before"; the analyst can untick it.
+  prior_relationship_autodetect: true
+  # Every item for the analyst goes to "<memo> - Review.xlsx" next to the memo; the red remarks in the
+  # memo body carry the same IDs (R1, R2, ...).
+  output_filename: "Memo - {address} (DRAFT {date}).docx"

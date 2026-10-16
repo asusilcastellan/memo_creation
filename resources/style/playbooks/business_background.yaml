@@ -1,0 +1,23 @@
+# Section playbook - see transaction_overview.yaml for the field descriptions.
+section: Sponsorship Overview - Business background
+purpose: >-
+  The text after the bold label "Business background:" (do not repeat the label): who the sponsor(s) are and why
+  their experience fits this deal.
+required_elements:
+  - "Who the sponsor(s) / guarantor(s) are and the company they own or run (location)."
+  - "Real estate background and years of experience."
+  - "Major completed projects, notable holdings and quantitative track record (projects / units / SF / dollar volume)."
+  - "Property-type and market experience relevant to this deal."
+variants:
+  construction: "Add one or two sentences on the General Contractor and its experience, if the GC is named in the facts."
+  single_sponsor: "Open with 'According to the resume provided to Castellan, ...' or 'As per the sponsor’s bio shared with Castellan, ...'."
+  several_sponsors: "Open with 'The Borrowers, A and B, have ...'."
+allowed_attributions:
+  - "According to the resume provided to Castellan"
+  - "According to the sponsor’s bio shared with Castellan"
+  - "As per the sponsor’s bio shared with Castellan"
+  - "As per the resume provided to Castellan"
+banned_phrases: ["email chain", "term sheet", "per the", "it is worth noting", "in conclusion", "robust", "boasts",
+                 "net worth", "liquidity", "credit score", "background facts"]
+target_words: {min: 65, max: 122}     # examples: median 94 words, +/- 30%
+notes: Do NOT include net worth, liquidity or credit information here - the template adds them.

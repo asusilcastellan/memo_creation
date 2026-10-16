@@ -1,0 +1,9 @@
+---
+loan_type: acquisition
+property_type: industrial
+structure: mezz
+exit: refinance
+quality: gold
+source_memo: Memo Template for AI - Acquisition.docx
+---
+Castellan Capital will provide a senior loan of $2,240,000 for the acquisition and renovation of the industrial property located at 150 E Aurora St, Waterbury, CT. Reign Funding will provide a $660,000 junior loan subordinate to Castellan’s position. The purchase price of the property is $3,000,000, and the borrower has budgeted $1,700,000 for capital expenditures. Of this amount, $950,000 will be financed by Castellan and Reign once the borrower has spent the initial $750,000. Upon renovation, the borrower plans to lease up the property and refinance it with a permanent loan.

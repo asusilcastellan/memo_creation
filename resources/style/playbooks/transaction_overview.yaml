@@ -1,0 +1,33 @@
+# Section playbook - read by memo_app/writer.py (plan -> write -> check). Edit freely (YAML).
+#   required_elements  ordered list the plan and the paragraph must follow
+#   variants           extra guidance keyed by loan type / structure / other tags of the deal
+#   allowed_attributions  the only ways the text may cite a source (exempt from banned_phrases)
+#   banned_phrases     the check step rejects text containing these (case-insensitive)
+#   target_words       expected length; the check allows 30% either side
+section: Transaction Overview
+purpose: >-
+  One paragraph from which a reader understands the whole loan (Vasist): the loan, the property, any junior
+  loan, where the money goes and how Castellan is repaid.
+required_elements:
+  - "The loan: amount and purpose. Begin EXACTLY with the required opening words and continue that sentence naturally."
+  - "One line about the property: type, address and its key size facts (units, unit mix, gross / net rentable SF, acreage) when available."
+  - "Junior / mezzanine loan ONLY if facts.has_mezz is true: '<Lender> will provide a $X junior loan subordinate to Castellan’s position.' Never mention a junior loan otherwise."
+  - "Where the money goes (see the guidance for this loan type)."
+  - "Repayment: how the borrower repays Castellan (permanent refinance, sale / sellout, lease-up then refinance, sale of entitled land...)."
+variants:
+  acquisition: "Purchase price; WITH renovation/capex mention the capex budget and how much of it is financed and when (construction reserve / draws). WITHOUT renovation talk only about the purchase price."
+  construction: "State the LTC: 'Castellan’s fully funded loan amount represents X% LTC based on the budgeted project costs.'"
+  refinance: "Name the existing debt being refinanced."
+  note_on_note: "Describe the underlying loan (original lender, UPB, lien position, maturity) and the collateral."
+  pari_passu: "Castellan holds a share of a larger senior loan led by another lender: the opening already says so; ratios refer to the total loan."
+  participation: "Castellan holds a participation in a larger loan led by another lender: the opening already says so."
+  mezz: "Mention the junior loan as described in the required elements."
+allowed_attributions:
+  - "Based on the appraisal report"
+  - "According to the appraisal"
+banned_phrases: ["email chain", "term sheet", "per the", "it is worth noting", "in conclusion", "robust", "boasts",
+                 "correspondence", "background facts", "underwriting model"]
+target_words: {min: 55, max: 102}     # examples: median 78 words, +/- 30%
+notes: >-
+  Vasist: a reader of this paragraph alone must understand the whole loan. Keep the order loan -> property ->
+  use of funds -> repayment.

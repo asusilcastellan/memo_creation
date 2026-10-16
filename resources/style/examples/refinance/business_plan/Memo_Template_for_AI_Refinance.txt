@@ -1,0 +1,9 @@
+---
+loan_type: refinance
+property_type: single-family
+structure: mezz
+exit: refinance
+quality: gold
+source_memo: Memo Template for AI - Refinance.docx
+---
+The sponsor’s business plan is to refinance the existing construction loan and provide additional time to market and sell the two luxury waterfront residences, each of which has access to boat slips. The sponsor intends to repay the debt through the sale of these properties.

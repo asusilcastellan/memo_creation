@@ -1,0 +1,21 @@
+# Section playbook - see transaction_overview.yaml for the field descriptions.
+section: Sponsor Risk - experience sentence
+purpose: >-
+  One or two sentences inserted in the fixed Sponsor Risk paragraph (after the background-check sentence, before
+  the guaranty sentence) explaining why the sponsor is experienced enough for this deal.
+required_elements:
+  - "Why the sponsor is experienced enough for this deal, from the resume."
+variants:
+  default: >-
+    Pattern: "Based on the resume and personal financial statement provided by Mr. X, he has substantial experience
+    as an owner and investor in residential and commercial real estate." or "Based on his background, he is an
+    active real estate developer with experience developing luxury residential properties in the Hamptons."
+allowed_attributions:
+  - "Based on the resume provided by"
+  - "Based on the resume and personal financial statement provided by"
+  - "Based on his background"
+  - "Based on her background"
+banned_phrases: ["email chain", "term sheet", "per the", "it is worth noting", "in conclusion", "robust", "boasts",
+                 "guaranty", "background check", "net worth", "previously worked"]
+target_words: {min: 20, max: 36}      # examples: median 28 words, +/- 30%
+notes: Do not mention guaranties, background checks, net worth figures or Castellan’s prior relationship - the template adds them.

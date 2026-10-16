@@ -1,0 +1,17 @@
+# Castellan Memo Builder - Python 3.11+ (tested on 3.12)
+openai>=2.0          # Responses API + structured outputs (responses.parse)
+dropbox>=12.0
+python-docx>=1.1
+pymupdf>=1.24        # PDF text, page images, signature-field detection (AGPL - fine for internal use)
+openpyxl>=3.1
+pydantic>=2.7
+Jinja2>=3.1
+PyYAML>=6.0
+python-dotenv>=1.0
+msal>=1.28           # Microsoft Graph app-only sign-in (Outlook email chain)
+extract-msg>=0.48    # Outlook .msg files in the deal folder
+# HTTP calls (NY Fed, FRED, Graph) use httpx / httpx2, which come with openai
+
+# dev / build
+pyinstaller>=6.6
+pytest>=8.0

@@ -1,0 +1,9 @@
+---
+loan_type: note_on_note
+property_type: land
+structure: note_on_note
+exit: refinance
+quality: gold
+source_memo: Memo Template for AI - Note on Note.docx
+---
+Devico; however, based on the resume submitted by the borrower, he has extensive experience in mortgage investments, loan workouts, and debt restructuring through his role at Crosby Capital USA. He has been involved in the acquisition and management of more than 300 loans with an aggregate value exceeding $100 million, with experience spanning first and second mortgage positions, unsecured notes, and rehabilitation projects.

@@ -1,0 +1,9 @@
+---
+loan_type: construction
+property_type: multifamily
+structure: senior
+exit:
+quality: gold
+source_memo: Memo Template for AI - Construction.docx
+---
+Castellan will provide a loan of $19,250,000 to finance the construction of a class-A multifamily property located at 161 N. Coit Street in Florence, South Carolina. The sponsor purchased the 1.33-acre site for $2.04 million and has budgeted $24.79 million in hard costs to construct the property. Upon completion, the property will span 121,460 gross square feet and 111,209 net rentable square feet across 102 units. The building will feature state of the art amenities including a saltwater pool, a full-service fitness center, co-working stations, covered parking, and more. The unit mix will consist of 45 one-bedroom units, 41 two-bedroom units, and 16 three-bedroom units. Castellan’s fully funded loan amount represents 60% LTC based on the budgeted project costs. Upon stabilization of the property, the borrower intends to repay Castellan’s loan with permanent financing.

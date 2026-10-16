@@ -1,0 +1,9 @@
+---
+loan_type: note_on_note
+property_type: land
+structure: note_on_note
+exit: refinance
+quality: gold
+source_memo: Memo Template for AI - Note on Note.docx
+---
+According to the resume submitted by the borrower, Mr. Yonel Devico serves as Principal Manager of Crosby Capital USA, a mortgage investment company where he has been involved in the acquisition and workout of more than 300 loans with an aggregate value exceeding $100 million. His experience includes trading first and second mortgage positions, managing unsecured notes, overseeing rehabilitation projects, and executing debt restructuring and note reperformance strategies. Mr. Devico also has a legal background with experience managing complex bankruptcy and foreclosure proceedings. He is a graduate of Audencia Business School, holds a Master of Science in Real Estate Development from Columbia University, and has completed the Real Estate Executive Program at Harvard Business School.

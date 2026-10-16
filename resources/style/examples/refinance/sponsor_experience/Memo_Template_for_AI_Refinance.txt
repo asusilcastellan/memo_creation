@@ -1,0 +1,9 @@
+---
+loan_type: refinance
+property_type: single-family
+structure: mezz
+exit: refinance
+quality: gold
+source_memo: Memo Template for AI - Refinance.docx
+---
+Bialsky will serve as additional security for the loan.
