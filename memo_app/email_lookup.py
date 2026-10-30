@@ -116,23 +116,45 @@ def match(rows: list[LookupRow], query: str, cfg: LookupConfig, limit: int = 25)
 
 
 def _resolve_workbook(cfg: LookupConfig, settings, log: Log) -> Path:
-    """Local/synced path -> use it directly; otherwise download the Dropbox path to the cache."""
-    if not cfg.workbook:
+    """Local/synced path -> use it directly; otherwise download the Dropbox path to the cache.
+    Raises RuntimeError with a plain-English message (never a raw Dropbox ApiError)."""
+    raw = (cfg.workbook or "").strip()
+    if not raw:
         raise RuntimeError(
             "No lookup workbook configured. Set email_lookup.workbook in settings.yaml to the "
             "board export (a local path or a Dropbox path like /Bridge Lending/.../board.xlsx)."
         )
-    local = Path(cfg.workbook).expanduser()
-    if local.is_file():
-        return local
-    if not getattr(settings, "has_dropbox", False):
+
+    # 1) A file on this computer: as given, or relative to the app / project folder.
+    from . import paths
+
+    candidates = [Path(raw).expanduser()]
+    if not Path(raw).expanduser().is_absolute():
+        candidates.append(paths.app_dir() / raw)
+    for c in candidates:
+        if c.is_file():
+            return c
+
+    # 2) A Dropbox path (anything starting with "/", or a name we could not find locally).
+    looks_local = raw.startswith((".", "~")) or "\\" in raw or (len(raw) > 1 and raw[1] == ":")
+    if looks_local or not getattr(settings, "has_dropbox", False):
         raise RuntimeError(
-            f"Lookup workbook '{cfg.workbook}' is not a file on this computer and no Dropbox "
-            "credentials are configured to download it."
+            f"Could not find the lookup workbook '{raw}'. Set email_lookup.workbook in settings.yaml "
+            "to a file on this computer or a Dropbox path like /Bridge Lending/.../board.xlsx."
         )
     from .storage import DropboxStorage
 
-    return DropboxStorage(settings, log).download_path(cfg.workbook)
+    try:
+        return DropboxStorage(settings, log).download_path(raw)
+    except Exception as exc:
+        detail = str(exc)
+        hint = (" - no file at that Dropbox path." if "not_found" in detail.lower()
+                else f" ({detail[:160]})")
+        raise RuntimeError(
+            f"Could not read the lookup workbook '{raw}' from Dropbox{hint} "
+            "Check email_lookup.workbook in settings.yaml (it must be the full Dropbox path, "
+            "e.g. /Bridge Lending/.../board.xlsx)."
+        ) from exc
 
 
 def load_rows(settings, log: Log = print, cfg: LookupConfig | None = None) -> list[LookupRow]:
