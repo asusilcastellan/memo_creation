@@ -6,3 +6,6 @@ build/
 dist/
 *.spec.bak
 ~$*
+
+# local demo lookup workbook (not committed)
+demo_data.xlsx
