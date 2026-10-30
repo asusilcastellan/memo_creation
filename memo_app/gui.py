@@ -19,7 +19,7 @@ from pathlib import Path
 from tkinter import filedialog, messagebox, scrolledtext, ttk
 from tkinter import font as tkfont
 
-from . import __version__, cache, paths, rates
+from . import __version__, cache, email_lookup, paths, rates
 from . import ui_theme as T
 from .facts import LOAN_TYPES, UserInputs
 from .progress import GENERATE_STEPS, SCAN_STEPS, Reporter, UserFacingError
@@ -238,6 +238,102 @@ class ChooseSourceDialog(tk.Toplevel):
         if self.sheets is not None and self._sheet_names:
             sheets = [self._sheet_names[i] for i in self.sheets.curselection()]
         self._finish(("use", files, sheets))
+
+    def _finish(self, result):
+        self.result = result
+        self.grab_release()
+        self.destroy()
+
+
+# --------------------------------------------------------------------------- email lookup dialog
+class EmailLookupDialog(tk.Toplevel):
+    """Pick the board row for this deal so its Outlook conversation ID can be read.
+    Sets self.result to the chosen email_lookup.LookupRow, or None on cancel."""
+
+    def __init__(self, parent, rows, query, cfg):
+        super().__init__(parent)
+        self.rows, self.cfg = rows, cfg
+        self.result = None
+        self.title("Find the deal's email thread")
+        self.configure(background=T.BG)
+        self.transient(parent)
+        self.geometry("920x560")
+        self.minsize(760, 440)
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
+
+        outer, frm = T.card(self, "Which deal is this?")
+        outer.grid(row=0, column=0, sticky="nsew", padx=16, pady=(16, 8))
+        frm.columnconfigure(1, weight=1)
+        frm.rowconfigure(3, weight=1)
+        ttk.Label(frm, text="Matched on the deal folder name. Pick the right row - its email thread will be read "
+                            "from Outlook. Type a different address and Search to refine.",
+                  style="Muted.TLabel", wraplength=820, justify="left").grid(row=0, column=0, columnspan=3,
+                                                                             sticky="w", pady=(0, 10))
+
+        ttk.Label(frm, text="Search").grid(row=1, column=0, sticky="w", padx=(0, 12), pady=ROW_PAD)
+        self.search_var = tk.StringVar(value=query or "")
+        search = ttk.Entry(frm, textvariable=self.search_var)
+        search.grid(row=1, column=1, sticky="ew", pady=ROW_PAD)
+        ttk.Button(frm, text="Search", style="Secondary.TButton", command=self._search).grid(row=1, column=2,
+                                                                                             sticky="ew", padx=(8, 0))
+        search.bind("<Return>", lambda e: self._search())
+
+        self.note = tk.StringVar()
+        ttk.Label(frm, textvariable=self.note, style="Muted.TLabel").grid(row=2, column=0, columnspan=3, sticky="w")
+
+        cols = ["score"] + list(cfg.display_columns)
+        self.tree = ttk.Treeview(frm, columns=cols, show="headings", selectmode="browse", height=12)
+        headings = {"score": "Match"}
+        widths = {"score": 70, "Name": 250, "Broker": 150, "Loan Request": 120, "Loan Type": 120, "Asset Type": 120}
+        for c in cols:
+            self.tree.heading(c, text=headings.get(c, c))
+            self.tree.column(c, width=widths.get(c, 130), anchor="center" if c == "score" else "w",
+                             stretch=(c == "Name"))
+        self.tree.grid(row=3, column=0, columnspan=2, sticky="nsew", pady=ROW_PAD)
+        tscroll = ttk.Scrollbar(frm, orient="vertical", command=self.tree.yview)
+        tscroll.grid(row=3, column=2, sticky="ns", pady=ROW_PAD)
+        self.tree.configure(yscrollcommand=tscroll.set)
+        self.tree.bind("<Double-1>", lambda e: self._use())
+
+        bar = ttk.Frame(self, style="App.TFrame")
+        bar.grid(row=1, column=0, sticky="ew", padx=16, pady=(0, 16))
+        bar.columnconfigure(0, weight=1)
+        ttk.Button(bar, text="Cancel", style="Ghost.TButton", command=lambda: self._finish(None)
+                   ).grid(row=0, column=1, padx=(0, 8))
+        ttk.Button(bar, text="Use selected", style="Primary.TButton", command=self._use).grid(row=0, column=2)
+
+        self._matches: list = []
+        self._search()
+        T.center_over(self, parent)
+        T.color_title_bar(self)
+        self.grab_set()
+        self.bind("<Escape>", lambda e: self._finish(None))
+        self.protocol("WM_DELETE_WINDOW", lambda: self._finish(None))
+        search.focus_set()
+        self.wait_window(self)
+
+    def _search(self):
+        self._matches = email_lookup.match(self.rows, self.search_var.get(), self.cfg)
+        self.tree.delete(*self.tree.get_children())
+        for i, r in enumerate(self._matches):
+            vals = [f"{r.score}%"] + [r.values.get(c, "") for c in self.cfg.display_columns]
+            self.tree.insert("", "end", iid=str(i), values=vals)
+        if not self.rows:
+            self.note.set("No deals with a conversation ID were found in the board workbook.")
+        elif not self._matches:
+            self.note.set("No rows to show. Type an address and Search.")
+        elif self._matches[0].score < self.cfg.threshold:
+            self.note.set(f"No match at or above {self.cfg.threshold}% - showing the closest rows. Refine your search.")
+        else:
+            self.note.set(f"Showing matches at or above {self.cfg.threshold}%. Pick the correct deal.")
+
+    def _use(self):
+        sel = self.tree.selection()
+        if not sel:
+            messagebox.showinfo("Email lookup", "Select the deal's row first (or Cancel).", parent=self)
+            return
+        self._finish(self._matches[int(sel[0])])
 
     def _finish(self, result):
         self.result = result
@@ -472,16 +568,12 @@ class App(tk.Tk):
         self._proxy_rate: tuple[str, str] | None = None   # (index, text) when Fetch filled overnight SOFR for Term SOFR
 
         has_graph = self.settings.has_graph
-        self._label(frm, 4, "Conversation ID")
-        self.conv_var = tk.StringVar()
-        conv_entry = self._grid_input(ttk.Entry(frm, textvariable=self.conv_var,
-                                                state="normal" if has_graph else "disabled"), 4)
-        self._field_hint(conv_entry, self.conv_var, "optional" if has_graph else "Outlook not set up")
+        self._conv_id = ""          # Outlook conversation ID chosen from the board workbook (email lookup)
 
         ttk.Separator(frm, orient="horizontal").grid(row=5, column=0, columnspan=3, sticky="ew", pady=(4, 2))
         self.prior_var = tk.BooleanVar(value=False)
         self.web_var = tk.BooleanVar(value=True)
-        self.graph_var = tk.BooleanVar(value=has_graph)
+        self.graph_var = tk.BooleanVar(value=False)
         ttk.Checkbutton(frm, text="Castellan has done a loan with this sponsor before", variable=self.prior_var
                         ).grid(row=6, column=0, columnspan=3, sticky="w")
         self.prior_info = tk.StringVar()
@@ -491,9 +583,15 @@ class App(tk.Tk):
         self._prior_autoticked: str | None = None
         ttk.Checkbutton(frm, text="Run online adverse-media search on the sponsor(s)", variable=self.web_var
                         ).grid(row=8, column=0, columnspan=3, sticky="w")
-        ttk.Checkbutton(frm, text="Read email chain from Outlook", variable=self.graph_var,
-                        state="normal" if has_graph else "disabled").grid(row=9, column=0, columnspan=3, sticky="w")
-        frm.rowconfigure(10, weight=1)
+        self.graph_check = ttk.Checkbutton(frm, text="Read email chain from Outlook", variable=self.graph_var,
+                                           command=self._on_graph_toggle,
+                                           state="normal" if has_graph else "disabled")
+        self.graph_check.grid(row=9, column=0, columnspan=3, sticky="w")
+        self.graph_info = tk.StringVar(value="" if has_graph else "Outlook not set up")
+        self.graph_info_label = ttk.Label(frm, textvariable=self.graph_info, style="Muted.TLabel",
+                                          wraplength=self.px(520), justify="left")
+        self.graph_info_label.grid(row=10, column=0, columnspan=3, sticky="w", padx=(28, 0))
+        frm.rowconfigure(11, weight=1)
 
     def _build_notes(self, root):
         outer, frm = T.card(root, padding=12)
@@ -698,12 +796,68 @@ class App(tk.Tk):
             run_web_search=self.web_var.get(),
             output_dir=self.out_var.get().strip(),
             read_graph=bool(self.graph_var.get() and self.settings.has_graph),
-            conversation_id=self.conv_var.get().strip() if self.settings.has_graph else "",
+            conversation_id=self._conv_id if self.settings.has_graph else "",
         )
+
+    # ------------------------------------------------------------------ email lookup (conversation ID)
+    def _set_email_thread(self, name: str, keep: bool = False):
+        """Show the chosen Outlook thread under the checkbox; keep=False clears the conversation ID."""
+        if not keep:
+            self._conv_id = ""
+        if name:
+            self.graph_info.set(f"Email thread: {name}")
+        else:
+            self.graph_info.set("" if self.settings.has_graph else "Outlook not set up")
+
+    def _on_graph_toggle(self):
+        if not self.graph_var.get():                       # unticked -> forget the thread
+            self._set_email_thread("")
+            return
+        if not self.settings.has_graph:
+            self.graph_var.set(False)
+            return
+        if getattr(self, "_lookup_busy", False):
+            return
+        self._lookup_busy = True
+        self.graph_check.configure(state="disabled")
+        self.graph_info.set("Looking up the deal in the board…")
+        query = email_lookup.deal_name_from_path(self.path_var.get())
+
+        def worker():
+            try:
+                rows = email_lookup.load_rows(self.settings)
+                self.q.put(("lookup", (query, rows, None)))
+            except Exception as exc:                        # plain-English message from load_rows
+                self.q.put(("lookup", (query, None, str(exc))))
+
+        threading.Thread(target=worker, daemon=True).start()
+
+    def _on_lookup_loaded(self, query, rows, error):
+        self._lookup_busy = False
+        if self.settings.has_graph:
+            self.graph_check.configure(state="normal")
+        if error is not None:
+            self.graph_var.set(False)
+            self._set_email_thread("")
+            messagebox.showerror("Email lookup", error, parent=self)
+            return
+        cfg = email_lookup.LookupConfig.from_settings(self.settings)
+        dlg = EmailLookupDialog(self, rows, query, cfg)
+        if dlg.result is None:                             # cancelled -> leave the box unticked
+            self.graph_var.set(False)
+            self._set_email_thread("")
+            return
+        row = dlg.result
+        self._conv_id = row.conversation_id
+        name = row.values.get(cfg.display_columns[0], "") if cfg.display_columns else ""
+        self._set_email_thread(name or "selected deal", keep=True)
 
     # ------------------------------------------------------------------ sources table
     def _clear_plan(self):
         self.plan = None
+        if getattr(self, "graph_var", None) is not None and self.graph_var.get():
+            self.graph_var.set(False)                       # a different deal needs its own thread
+            self._set_email_thread("")
         if hasattr(self, "tree"):
             self.tree.delete(*self.tree.get_children())
             self.gen_btn.configure(state="disabled")
@@ -818,6 +972,8 @@ class App(tk.Tk):
                     self._show_plan(payload)
                 elif kind == "rate":
                     self._rate_fetched(*payload)
+                elif kind == "lookup":
+                    self._on_lookup_loaded(*payload)
                 elif kind == "done":
                     self._set_busy(False)
                     if payload is not None and hasattr(payload, "memo"):

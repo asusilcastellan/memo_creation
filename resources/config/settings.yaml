@@ -48,6 +48,19 @@ emails:
   # message and the newest messages are kept, older replies in the middle are left out.
   max_chain_chars: 60000
 
+email_lookup:
+  # The team board exported to .xlsx, one row per deal, with its Outlook "Conversation ID".
+  # When the analyst ticks "Read email chain from Outlook", the deal folder's final name is
+  # fuzzy-matched against the match_columns below and they pick the row; its conversation ID
+  # is read through Graph (no more pasting a conversation ID by hand).
+  # workbook: a local/synced path, or a Dropbox path like /Bridge Lending/.../board.xlsx
+  workbook: demo_data.xlsx
+  sheet: board_items
+  match_columns: [Name, Property Address]        # fuzzy-matched against the deal folder name
+  id_column: Conversation ID                     # the column that holds the Outlook conversation ID
+  display_columns: [Name, Broker, Loan Request, Loan Type, Asset Type]   # shown in the chooser
+  threshold: 80                                  # minimum fuzzy match (0-100) to list a row
+
 debug:
   # Cache folder: %LOCALAPPDATA%\CastellanMemo\cache (Help -> Open diagnostics folder in the app).
   # keep_run_files: also keep facts.json and the sources report of each run (normally deleted once the

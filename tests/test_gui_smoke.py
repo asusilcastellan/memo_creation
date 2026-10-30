@@ -43,7 +43,7 @@ def test_theme_styles_exist(app):
 def test_inputs_line_up_per_card(app):
     for card in (app.deal_card, app.rates_card):
         fields = [w for w in card.winfo_children() if w.winfo_class() in ("TEntry", "TCombobox")]
-        assert len(fields) >= 3
+        assert len(fields) >= 2
         right_edges = [w.winfo_rootx() + w.winfo_width() for w in fields]
         left_edges = [w.winfo_rootx() for w in fields]
         assert max(right_edges) - min(right_edges) <= 2, right_edges

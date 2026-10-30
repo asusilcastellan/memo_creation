@@ -100,6 +100,7 @@ pyinstaller memo_app.spec --noconfirm         # or build.bat
 | Email folders / file types | `resources/config/sources.yaml` → `emails` (`fallback_any_folder`, `<deal>` placeholder) |
 | Email cleaning (banners, quoted history, disclaimers), chain cap | `memo_app/emails.py` (`clean_body`, `build_chain`); `emails.max_chain_chars` |
 | Outlook / Graph lookup | `memo_app/graph_mail.py`; secrets `GRAPH_*` in `.env` (see `.env.example`) |
+| Deal → Outlook conversation ID lookup (board workbook, fuzzy match, GUI chooser) | `memo_app/email_lookup.py`; config `email_lookup` in `settings.yaml` (workbook/sheet/columns/threshold); GUI `gui.py` (`EmailLookupDialog`, `_on_graph_toggle`); single-file Dropbox download `storage.DropboxStorage.download_path` |
 | Email-vs-term-sheet conflict rules | `facts._apply_email_insights`; tolerances `rules.email_amount_tolerance_pct`, `rules.email_ratio_tolerance_pts` |
 
 ## Open items

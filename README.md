@@ -57,7 +57,7 @@ Without this, the tool still reads every `.eml` / `.msg` file saved in the deal 
 4. In `.env` set `GRAPH_TENANT_ID`, `GRAPH_CLIENT_ID`, `GRAPH_CLIENT_SECRET` and `GRAPH_MAILBOXES` (comma-separated mailboxes to search, e.g. `deals@castellanre.com,analyst@castellanre.com`).
 5. Run `python tools\check_graph.py` (sign-in + newest messages), `--subject "150 E Aurora"` (find a thread and its Conversation ID) or `--conversation-id "..."` (read a thread as the memo would).
 
-How the thread is found, for each mailbox: the Message-ID of each local `.eml` is looked up (`internetMessageId`), then every message of that conversation is read. If no Message-ID matches, the tool searches for the subject (without RE:/FW:). If you paste a **Conversation ID** in the app, that conversation is read directly. Graph and local messages are merged, duplicates removed, and ordered by date. If Graph is down or the secret is wrong, the reason (e.g. the Azure AD error) goes to the diagnostics log and the memo continues with the local files.
+How the thread is found, for each mailbox: when you tick **Read email chain from Outlook**, the app matches the deal folder's name against the team board workbook (`email_lookup` in `settings.yaml`) and you pick the deal; its **Conversation ID** is then read directly. If no conversation ID is used, the Message-ID of each local `.eml` is looked up (`internetMessageId`) and every message of that conversation is read; with no Message-ID match, the tool searches for the subject (without RE:/FW:). Graph and local messages are merged, duplicates removed, and ordered by date. If Graph is down or the secret is wrong, the reason (e.g. the Azure AD error) goes to the diagnostics log and the memo continues with the local files.
 
 ### Index rates
 - **SOFR / 30-day average SOFR**: NY Fed public API, no key needed.
@@ -77,7 +77,7 @@ After **1. Check sources**, the tool takes the names in the PFS / resume **file 
 |---|---|
 | Header (navy) | The two steps; the orange chip shows where you are: ① Check sources, then ② Generate memo |
 | **Deal** card | Deal folder, loan type, property type, exit strategy, where to save the memo |
-| **Rates & sources** card | Index and current index % (**Fetch**), Outlook conversation ID, and the three options: prior relationship, online adverse-media search, read the email chain from Outlook |
+| **Rates & sources** card | Index and current index % (**Fetch**), and the three options: prior relationship, online adverse-media search, read the email chain from Outlook (ticking it opens the board lookup to pick the deal's email thread) |
 | **Notes for the memo** | Loan purpose, business plan, exit - this wins over everything else |
 | Buttons | **Open output folder** · **1. Check sources** (blue) · **2. Generate memo** (orange) |
 | **Sources** card | The Sources table (see below) |

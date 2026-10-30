@@ -185,6 +185,16 @@ class DropboxStorage(Storage):
     def parent(self, path: str) -> str:
         return str(PurePosixPath(self.normalise(path)).parent)
 
+    def download_path(self, path: str) -> Path:
+        """Download a single Dropbox file (given its full path) to the cache and return it."""
+        p = self.normalise(path)
+        md = self.dbx.files_get_metadata(p)
+        mod = (getattr(md, "client_modified", None) or getattr(md, "server_modified", None)
+               or datetime.min.replace(tzinfo=timezone.utc))
+        entry = FileEntry(md.path_display, md.name, md.name, False,
+                          mod.replace(tzinfo=timezone.utc), getattr(md, "size", 0))
+        return self.fetch(entry)
+
     def fetch(self, entry: FileEntry) -> Path:
         key = hashlib.sha1(f"{entry.path}|{entry.modified.isoformat()}|{entry.size}".encode()).hexdigest()[:16]
         local = self.cache / f"{key}{entry.suffix}"
